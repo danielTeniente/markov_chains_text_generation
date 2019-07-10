@@ -33,7 +33,7 @@ print("Generador de textos")
 
 #simulacion
 target='to be or not'
-pasos=len(text)
+pasos=len(target)
 letras=['t','o','r','b','n','e',' ']
 rep=int(input())
 mostrar=int(input())
