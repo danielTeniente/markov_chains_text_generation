@@ -18,37 +18,58 @@ def string_difference(target, test):
     difference = sum(1 for e in match_pattern if e[0] != e[1])  #count tuples with non matching elements
     difference = difference + abs(len(target) - len(test)) 
     return(difference)
-tabla=np.matrix([
+def Obtener_MatrizP (texto):
+    pasos=len(texto)
+    texto=list(texto)
+    letras=list(set(texto))
+    indices = {}
+    i=0
+    for letra in letras:
+        indices[letra]=[i] 
+        i+=1
+    matrizP=np.zeros((len(letras),len(letras)))
+    textos=[]
+    for char in letras:
+        siguientes=[]
+        for i in range(pasos-1):
+            if(texto[i]==char):
+                siguientes.append(texto[i+1])
+        textos.append(list(set(siguientes)))
+        divisor=len(textos[-1]) 
+        for character in textos[-1]:
+            matrizP[indices[char],indices[character]]=1/divisor
+    return matrizP,indices
 
-                # t     o     r     b     n     e    ' '
-                 [0,    1,    0,    0,    0,    0,    0], #t
-                 [1/3,  0,  1/3,    0,    0,    0,    1/3], #o
-                 [0,    0,    0,    0,    0,    0,    1], #r
-                 [0,    0,    0,    0,    0,    1,    0], #b
-                 [0,    1,    0,    0,    0,    0,    0], #n
-                 [0,    0,    0,    0,    0,    0,    1], #e
-                 [0,   1/3,   0,   1/3,   1/3,  0,    0],]) #' '
+target=input("Ingrese el texto: ")
+rep=int(input("Rep: "))
+mostrar=int(input("Verbose: "))
+
+tabla,indice=Obtener_MatrizP(target)
+letras=list(set(target))
+
 
 print("Generador de textos")
 
 #simulacion
-target='to be or not'
+
 pasos=len(target)
-letras=['t','o','r','b','n','e',' ']
-rep=int(input())
-mostrar=int(input())
+target=list(target)
+
 cont=0
 respuesta=[]
-inicio=0
+inicio=indice[target[0]]
+
 for j in range(rep):
     camino=[]
     camino.append(inicio)
-    respuesta.append('t')
+    respuesta.append(target[0])
     for i in range(pasos-1):
         limites=np.array(tabla[camino[-1]])
         limites=np.cumsum(limites)
-        camino.append(np.where(np.random.rand()<limites)[0][0])
-        respuesta[j]+=letras[camino[-1]]
+        if(limites.sum()!=0):
+            camino.append(np.where(np.random.rand()<limites)[0][0])
+            respuesta[j]+=letras[camino[-1]]
+        
 mejor=[0,'']
 for text in respuesta:
     similaridad=similarity(target, text)
